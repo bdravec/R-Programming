@@ -49,11 +49,11 @@ for (i in 1:16){
   }else{
     color="purple"
   }
-  l=0.2
-  right(i*0.2, col=color)
-  up(i*0.2, col=color)
-  left(i*0.2+0.1, col=color)
-  down(i*0.2+0.1, col=color)
+  l=0.5
+  right(i*l, col=color)
+  up(i*l, col=color)
+  left(i*l+0.25, col=color)
+  down(i*l+0.25, col=color)
 
 }
 
