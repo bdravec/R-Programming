@@ -20,84 +20,80 @@ draw_hangman <- function(wrong_count) {
   # HINT: use the lines() function for horizontal and
   # vertical lines. To test you can first open an empty plot
   # before running draw_hangman(...):
-  #       plot.new()
-  #       plot.window(xlim = c(0, 10), ylim = c(0, 10))
-  #
-  # TODO:
-  # - Draw the main vertical pole
-  # - the top horizontal beam
-  # - the small support beam
-  # - and the rope.
+  # plot.new()
+  # plot.window(xlim = c(0, 10), ylim = c(0, 10))
   
+  #
+  # Draw the gallows
+  # Draw the main vertical pole
+  lines(c(1, 1), c(1, 8), lwd = 2)
+  # - top horizontal pole
+  lines(c(1, 4), c(8, 8), lwd = 2)
+  # - the small support beam
+  lines(c(1, 2), c(7, 8), lwd = 2)
+  # - the rope
+  lines(c(4, 4), c(8, 7), lwd = 2)
   
   # Next, conditionally draw parts of the hangman based on
   # the value of `wrong_count`
   
-  # TODO: Draw the Head if one or more incorrect guesses
+  #  Draw the Head if one or more incorrect guesses
   # symbols() helps drawing a circle
-  # ...
-  # ...
-  # ...
-  # ...
+  if (wrong_count >= 1) {
+    symbols(4, 6.5, circles = 0.5, add = TRUE, inches = FALSE, lwd = 2)
+  }
   
+  #  Draw the Body if two or more incorrect guesses
+  if (wrong_count >= 2) {
+    lines(c(4, 4), c(6, 4.5), lwd = 2)
+  }
   
-  # TODO: Draw the Body if two or more incorrect guesses
-  # ...
-  # ...
-  # ...
-  # ...
+  #  Draw the Left Arm
+  if (wrong_count >= 3) {
+    lines(c(4, 3), c(5.5, 4.5), lwd = 2)
+  }
   
+  #  Draw the Right Arm
+  if (wrong_count >= 4) {
+    lines(c(4, 5), c(5.5, 4.5), lwd = 2)
+  }
   
-  # TODO: Draw the Left Arm
-  # ...
-  # ...
-  # ...
-  # ...
+  #  Draw the Left Leg
+  if (wrong_count >= 5) {
+    lines(c(4, 3), c(4.5, 3), lwd = 2)
+  }
   
-  # TODO: Draw the Right Arm
-  # ...
-  # ...
-  # ...
-  # ...
-  
-  # TODO: Draw the Left Leg
-  # ...
-  # ...
-  # ...
-  # ...
-  
-  # TODO: Draw the Right Leg
-  # ...
-  # ...
-  # ...
-  # ...
+  #  Draw the Right Leg
+  if (wrong_count >= 6) {
+    lines(c(4, 5), c(4.5, 3), lwd = 2)
+  }
 }
 
 # =====================================================
+
 
 # Main function to run the Hangman game.
 #
 play_hangman <- function() {
   # --- 1. SETUP ---
-  # TODO: Create a vector of words. Make them all uppercase.
-  # HINT: toupper()
-  # ...
+  # Create a vector of words. Make them all uppercase.
+  words <- toupper(c("donald", "murmeltier", "computer", "rumpelstilzchen", "hacker",
+                     "bananensplit", "kirschenessen", "tangens", "hausboot", "schmetterling"))
   
-  # TODO: Randomly sample one word from the list.
-  # ...
+  # Randomly sample one word from the list.
+  conundrum <- sample(words, 1)
   
-  # TODO: Split the word into a vector of individual letters.
-  # HINT: use strsplit()
-  # ....
+  # Split the word into a vector of individual letters.
+  word_letters <- strsplit(conundrum, "")[[1]]
   
-  # TODO: Define a vector to show the player's progress
+  # Define a vector to show the player's progress
   # (e.g., c("_", "_", "A", "_")). Initially it only consists
   # of dashes.
-  # guessed <- ....
+  guessed <- rep("_", length(word_letters))
   
-  # TODO: Define a vector to store the letters
+  # Define a vector to store the letters
   # the user has guessed incorrectly. Initially it is empty
-  # wrong_guesses <- ...
+  wrong_guesses <- c()
   
   # The maximum number of allowed wrong guesses
   max_wrong <- 6
@@ -114,32 +110,39 @@ play_hangman <- function() {
     plot.new()
     plot.window(xlim = c(0, 10), ylim = c(0, 10))
     
-    # TODO: Call your draw_hangman function with the
+    # Call your draw_hangman function with the
     # current number of wrong guesses
-    # draw_hangman(...)
+    draw_hangman(length(wrong_guesses))
     
-    # TODO: Display the word-in-progress to the player
+    # Display the word-in-progress to the player
     # HINT: Use
     # text(5, 9, paste(guessed, collapse = "  "), cex = 2)
     # where guessed is the player's current progress
     # (e.g., c("_", "_", "A", "_"))
-    
+    text(5, 9, paste(guessed, collapse = "  "), cex = 2)
     
     # --- 2b. CHECK FOR WIN/LOSS ---
-    # TODO: Check for a win. If the player won,
+    # Check for a win. If the player won,
     # print a success and set `game_over` to TRUE.
-    
-    # TODO: Check for a loss. If the player lost,
+    if (all(guessed == word_letters)) {
+      text(5, 5, "YOU WIN!", cex = 3, col = "green")
+      game_over <- TRUE
+    }
+    # Check for a loss. If the player lost,
     # print a failure message, reveal the word, and
     # set `game_over` to TRUE.
-    
+    if (length(wrong_guesses) >= max_wrong) {
+      text(5, 5, "GAME OVER!", cex = 3, col = "red")
+      text(5, 3, paste("The word was:", conundrum), cex = 1.5)
+      game_over <- TRUE
+    }
     
     # --- 2c. USER INPUT ---
     # Only ask for input if the game is still ongoing.
     if (!game_over) {
-      # TODO: Ask the user to enter a letter and
+      # Ask the user to enter a letter and
       # HINT: use readline() and toupper()
-      # guess <- ....
+      guess <- toupper(readline(prompt = "Enter a letter: "))
       
       
       # Catch invalid input
@@ -157,14 +160,20 @@ play_hangman <- function() {
       }
       
       # --- 2d. PROCESS USER INPUT ---
-      # TODO: Check if the guessed letter is in the secret 
+      # Check if the guessed letter is in the secret 
       # word.
       # - If the letter is correct:  Find all positions of
       # the letter in the word and update `guessed`.
       # - If the letter is incorrect: Add the letter to
       # `wrong_guesses`
-      
-      
+      if (guess %in% word_letters) {
+        # Correct guess: find all positions and update
+        positions <- which(word_letters == guess)
+        guessed[positions] <- guess
+      } else {
+        # Wrong guess: add to wrong_guesses
+        wrong_guesses <- c(wrong_guesses, guess)
+      }
     } # End of if(!game_over)
     
   } # End of while-loop
